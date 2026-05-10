@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зеленый Доктор: Экспертная диагностика</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f9f4; color: #2c3e50; padding: 20px; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        .card { background: white; max-width: 600px; width: 100%; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin-bottom: 20px;}
+        h1 { color: #27ae60; text-align: center; margin-top: 0; margin-bottom: 5px; font-size: 1.8rem;}
+        p.subtitle { text-align: center; color: #7f8c8d; font-size: 0.9rem; margin-bottom: 25px; }
+        
+        /* Стили для секций */
+        .section-title { margin-top: 25px; margin-bottom: 15px; color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px;}
+        
+        /* Поля ввода (Растение) */
+        .input-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;}
+        .input-box { flex: 1; min-width: 200px; }
+        .input-box label { display: block; font-size: 0.9rem; color: #7f8c8d; margin-bottom: 5px; font-weight: 600;}
+        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background-color: #fdfdfd;}
+        
+        /* Сетка чекбоксов */
+        .symptoms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 500px) { .symptoms-grid { grid-template-columns: 1fr; } }
+        
+        .checkbox-label { display: flex; align-items: center; background: #f8f9fa; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; border: 1px solid #e9ecef; font-size: 0.95rem;}
+        .checkbox-label:hover { background: #e2e6ea; border-color: #ced4da; }
+        .checkbox-label input { margin-right: 12px; transform: scale(1.3); accent-color: #27ae60;}
+        
+        button { width: 100%; background-color: #27ae60; color: white; border: none; padding: 16px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background-color 0.3s; margin-top: 30px; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);}
+        button:hover:not(:disabled) { background-color: #219a52; transform: translateY(-1px); }
+        button:disabled { background-color: #95a5a6; cursor: not-allowed; box-shadow: none; }
+        
+        /* Блок результата и загрузки */
+        #result { margin-top: 25px; padding: 20px; border-radius: 12px; background: #f0fdf4; display: none; line-height: 1.6; border: 1px solid #c6f6d5;}
+        .loader { text-align: center; color: #e67e22; font-weight: bold; display: none; margin-top: 25px; font-size: 1.1rem; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>🩺 Зеленый Доктор</h1>
+        <p class="subtitle">Интеллектуальная система диагностики заболеваний растений</p>
+        
+        <div class="section-title">🌿 Кто наш пациент?</div>
+        <div class="input-group">
+            <div class="input-box">
+                <label>Название растения (если знаете):</label>
+                <input type="text" id="plantName" placeholder="Например: Спатифиллум, Томат...">
+            </div>
+            <div class="input-box">
+                <label>Или выберите тип:</label>
+                <select id="plantType">
+                    <option value="Неизвестно">Не знаю / Не уверен</option>
+                    <option value="Тропическое комнатное">Тропическое комнатное</option>
+                    <option value="Суккулент или кактус">Суккулент или кактус</option>
+                    <option value="Овощная культура (рассада)">Овощная культура (рассада)</option>
+                    <option value="Хвойное">Хвойное</option>
+                    <option value="Садовый кустарник">Садовый кустарник</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title">🍂 Что происходит с листьями?</div>
+        <div class="symptoms-grid">
+            <label class="checkbox-label"><input type="checkbox" value="Листья желтеют целиком">Желтеют целиком</label>
+            <label class="checkbox-label"><input type="checkbox" value="Сохнут только кончики">Сохнут кончики</label>
+            <label class="checkbox-label"><input type="checkbox" value="Скручиваются">Скручиваются</label>
+            <label class="checkbox-label"><input type="checkbox" value="Опадают зелеными">Опадают зелеными</label>
+            <label class="checkbox-label"><input type="checkbox" value="Темные/коричневые пятна">Темные пятна</label>
+            <label class="checkbox-label"><input type="checkbox" value="Белый налет как мука">Белый налет (как мука)</label>
+        </div>
+
+        <div class="section-title">💧 Почва и полив</div>
+        <div class="symptoms-grid">
+            <label class="checkbox-label"><input type="checkbox" value="Почва постоянно мокрая (залив)">Мокрая почва (залив)</label>
+            <label class="checkbox-label"><input type="checkbox" value="Земля пересохла как камень">Пересохла как камень</label>
+            <label class="checkbox-label"><input type="checkbox" value="Белая плесень или налет на земле">Плесень на земле</label>
+            <label class="checkbox-label"><input type="checkbox" value="Плохой дренаж (вода застаивается)">Вода застаивается</label>
+        </div>
+
+        <div class="section-title">☀️ Освещение и условия</div>
+        <div class="symptoms-grid">
+            <label class="checkbox-label"><input type="checkbox" value="Стоит на прямом жарком солнце">Прямое жаркое солнце</label>
+            <label class="checkbox-label"><input type="checkbox" value="Глубокая тень (мало света)">Глубокая тень</label>
+            <label class="checkbox-label"><input type="checkbox" value="Стоит на холодном сквозняке">Холодный сквозняк</label>
+            <label class="checkbox-label"><input type="checkbox" value="Рядом с горячей батареей (сухой воздух)">У горячей батареи</label>
+        </div>
+
+        <div class="section-title">🐛 Вредители (если видно)</div>
+        <div class="symptoms-grid">
+            <label class="checkbox-label"><input type="checkbox" value="Тонкая паутинка на листьях">Тонкая паутинка</label>
+            <label class="checkbox-label"><input type="checkbox" value="Мелкие мошки летают вокруг">Летают мошки</label>
+            <label class="checkbox-label"><input type="checkbox" value="Липкий налет на листьях (как сироп)">Липкий налет</label>
+            <label class="checkbox-label"><input type="checkbox" value="Белые пушистые комочки в пазухах">Белые пушистые комочки</label>
+        </div>
+
+        <button id="diagnoseBtn" onclick="getDiagnosis()">Провести диагностику</button>
+        
+        <div id="loader" class="loader">⏳ Проводим глубокий анализ симптомов...</div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // ВАШ СЕРВЕР ИЗ GOOGLE APPS SCRIPT
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwE318vSCmoBzwbSE7lcHKO77FaeX22GK1mpHWLaGck3d69BKV4AqD_IfhD28ijdHCu/exec";
+
+        async function getDiagnosis() {
+            const plantName = document.getElementById('plantName').value.trim();
+            const plantType = document.getElementById('plantType').value;
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const symptoms = Array.from(checkboxes).map(cb => cb.value).join(', ');
+
+            if (symptoms.length === 0) {
+                alert("Пожалуйста, отметьте хотя бы один симптом для проведения диагностики.");
+                return;
+            }
+
+            // Формируем досье пациента
+            let patientInfo = "";
+            if (plantName) {
+                patientInfo = `Растение называется "${plantName}".`;
+            } else {
+                patientInfo = `Точное название неизвестно, тип растения: ${plantType}.`;
+            }
+
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('diagnoseBtn').disabled = true;
+
+            // Обновленный мощный промпт (никто не увидит его кроме сервера)
+            const promptText = `Действуй как профессиональный фитопатолог и агроном. 
+            Пациент: ${patientInfo}
+            Наблюдаемые симптомы: ${symptoms}.
+            
+            Твоя задача: проанализировать симптомы и выдать экспертное заключение. Не пиши, что ты ИИ. Отвечай уверенно.
+            
+            Формат строго следующий:
+            **Диагноз 1:** [Название наиболее вероятной проблемы] (Вероятность высокая)
+            *Причина:* [Коротко почему это произошло]
+            *Лечение:* [Конкретные шаги по спасению]
+
+            **Диагноз 2:** [Альтернативный вариант, если симптомы двоякие]
+            *Причина:* [Коротко]
+            *Лечение:* [Конкретные шаги]`;
+
+            try {
+                // Отправляем как простой текст (обходим CORS защиту)
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('result');
+                if (data.result) {
+                    // Конвертируем Markdown (звездочки) в красивые HTML теги
+                    let formattedResult = data.result
+                        .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#27ae60; font-size:1.1em;">$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/\n/g, '<br>');
+                        
+                    resultDiv.innerHTML = formattedResult;
+                    resultDiv.style.display = 'block';
+                } else {
+                    throw new Error("Пустой ответ от сервера");
+                }
+
+            } catch (error) {
+                alert("Сервер временно недоступен. Пожалуйста, попробуйте позже.");
+                console.error(error);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('diagnoseBtn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
